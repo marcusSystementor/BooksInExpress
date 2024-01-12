@@ -58,7 +58,47 @@ app.get("/books/:id", async(req,res) => {
         res.status(200).json(bookWithId);
     }
 
+});
+
+app.delete("/books/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    let books = await readBooks();
+    const initialLength = books.length;
+    books = books.filter(book => book.id !== id);
+    if (books.length === initialLength) {
+        res.status(404).json({message: "Book not found"});
+    } else {
+        await writeBooks(books);
+        res.status(200).json({message: "Book deleted"});
+    }
+
+
+});
+
+app.put("/books/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const books = await readBooks();
+    const bookIndex = books.findIndex(book => book.id === id);
+    if (bookIndex === -1) {
+        res.status(404).json({message: "Book not found"});
+    } else {
+        books[bookIndex].name = req.body.name;
+        await writeBooks(books);
+        res.status(200).json(books[bookIndex]);
+    }
 })
+
+app.get("/currentdate", (req, res) => {
+    const currentDate = new Date();
+
+        const response = {
+        date: currentDate.toLocaleString(),
+        
+    }
+    res.json(response);
+});
+
+
 
 
 
