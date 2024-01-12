@@ -43,7 +43,23 @@ app.post("/books", async(req, res) => {
 app.get("/books", async(req, res) => {
     const books = await readBooks();
     res.status(200).json(books);
+});
+
+app.get("/books/:id", async(req,res) => {
+
+    const id = parseInt(req.params.id);
+
+    const books = await readBooks();
+
+    const bookWithId = books.find(book => book.id === id);
+    if (!bookWithId) {
+        res.status(404).json({message: "Book not found"});
+    } else {
+        res.status(200).json(bookWithId);
+    }
+
 })
+
 
 
 const server = http.createServer(app);
